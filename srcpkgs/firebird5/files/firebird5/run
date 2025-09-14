@@ -1,0 +1,10 @@
+#!/bin/sh
+FBUSER=_firebird
+FBGROUP=_firebird
+FBNAME=${PWD##*/}
+
+CHK(){ chpst -u $FBUSER:$FBGROUP test $@; }
+F="/etc/${FBNAME}/fb_guard"
+CHK -f "$F" -a -O "$F" || install --backup -m 640 -o $FBUSER -g $FBGROUP /dev/null "$F"
+
+exec chpst -u $FBUSER:$FBGROUP /usr/lib/${FBNAME}/sbin/fbguard -forever
